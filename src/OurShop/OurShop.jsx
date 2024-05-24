@@ -17,8 +17,14 @@ const OurShop = () => {
   const { category } = useParams();
   console.log(category);
   const initialIndex = categies.indexOf(category);
-  const [tabIndex, setTabIndex] = useState(0);
-  // initialIndex === -1 ? setTabIndex(0) : setTabIndex(initialIndex);
+  const [tabIndex, setTabIndex] = useState(
+    initialIndex === -1 ? 0 : initialIndex
+  );
+
+  // useEffect(() => {
+  //   initialIndex === -1 ? setTabIndex(0) : setTabIndex(initialIndex);
+  // }, []);
+  console.log(tabIndex);
   // initialIndex ? console.log("hello") : console.log("Gello");
   // console.log(initialIndex);
   const dessert = data.filter((item) => item.category === "dessert");
