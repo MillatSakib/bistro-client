@@ -1,10 +1,20 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { AuthContext } from "../../AuthProvider";
+import {
+  loadCaptchaEnginge,
+  LoadCanvasTemplate,
+  validateCaptcha,
+} from "react-simple-captcha";
 
 const Login = () => {
+  useEffect(() => {
+    loadCaptchaEnginge(6);
+  }, []);
+  const [wrongCaptcha, setWrongCaptcha] = useState(false);
+  const [disable, setDisable] = useState(true);
   const [passError, setPassError] = useState("");
   const [showPass, setShowPass] = useState(true);
   const { logInUser, GoogleSignIn, githubSignIn } = useContext(AuthContext);
@@ -27,6 +37,20 @@ const Login = () => {
     }
     setPassError("");
     logInUser(email, password);
+  };
+
+  const captchaSubmit = (e) => {
+    const user_captcha_value = e.target.value;
+    setWrongCaptcha(false);
+    setDisable(true);
+    if (user_captcha_value.length === 6) {
+      if (validateCaptcha(user_captcha_value, false) == true) {
+        setDisable(false);
+      } else {
+        setWrongCaptcha(true);
+        setDisable(true);
+      }
+    }
   };
 
   return (
@@ -85,11 +109,35 @@ const Login = () => {
                   {passError}
                 </div>
               </div>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Captcha</span>
+                </label>
+                <input
+                  type="text"
+                  name="captcha"
+                  onChange={captchaSubmit}
+                  className="input input-bordered text-base-content bg-base-100"
+                  required
+                  placeholder="Enter Captcha"
+                ></input>
+                <div className="label">
+                  {!wrongCaptcha ? (
+                    ""
+                  ) : (
+                    <span className="label-text-alt text-red-500">
+                      Invalid Captcha
+                    </span>
+                  )}
+                </div>
+              </div>
+              <LoadCanvasTemplate />
               <div className="form-control mt-1">
                 <input
                   type="submit"
                   className="btn btn-primary"
                   value="Login"
+                  disabled={disable}
                 ></input>
               </div>
               <p className=" py-4 text-green-600">
